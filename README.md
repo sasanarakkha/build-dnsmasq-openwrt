@@ -11,8 +11,8 @@ Builds of the latest [dnsmasq], **version 2.92rc3**, for [OpenWRT].
 ## Build Locally
 
 ```sh
-git clone https://github.com/github.com/sasanarakkha/build-dnsmasq-openwrt.git
-build-openwrt/build.sh
+git clone https://github.com/sasanarakkha/build-dnsmasq-openwrt.git
+build-dnsmasq-openwrt/build.sh
 ```
 
 ## References
