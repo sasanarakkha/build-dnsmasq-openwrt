@@ -1,0 +1,21 @@
+--- a/package/network/services/dnsmasq/Makefile	2025-12-26 06:39:28.572863364 +0000
++++ b/package/network/services/dnsmasq/Makefile	2025-12-26 13:40:50.790381588 +0000
+@@ -8,13 +8,13 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=dnsmasq
+-PKG_UPSTREAM_VERSION:=2.91
+-PKG_VERSION:=$(subst test,~~test,$(subst rc,~rc,$(PKG_UPSTREAM_VERSION)))
+-PKG_RELEASE:=2
++PKG_UPSTREAM_VERSION:=2.92rc3
++PKG_VERSION:=2.92_rc3
++PKG_RELEASE:=1
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_UPSTREAM_VERSION).tar.xz
+-PKG_SOURCE_URL:=https://thekelleys.org.uk/dnsmasq/
+-PKG_HASH:=f622682848b33677adb2b6ad08264618a2ae0a01da486a93fd8cd91186b3d153
++PKG_SOURCE_URL:=https://thekelleys.org.uk/dnsmasq/release-candidates/
++PKG_HASH:=96dc89417a3bf8e5104532156dc2d81f6b65d541006789232bcf7b3ad54aaf2a
+ 
+ PKG_LICENSE:=GPL-2.0
+ PKG_LICENSE_FILES:=COPYING

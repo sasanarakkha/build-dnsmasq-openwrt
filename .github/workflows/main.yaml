@@ -1,0 +1,119 @@
+name: main
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        openwrt_revision: ["v24.10.5", "v25.12.0-rc1"]
+        openwrt_target: ["lantiq-xrx200", "ramips-mt7621", "x86-64"]
+      fail-fast: false
+
+    env:
+      OPENWRT_REVISION: ${{ matrix.openwrt_revision }}
+      OPENWRT_TARGET: ${{ matrix.openwrt_target }}
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v5
+
+      - name: install prerequisites
+        run: ./1-prerequisites.sh
+
+      - name: restore clone cache
+        id: restore-clone
+        uses: actions/cache/restore@v5
+        with:
+          path: openwrt
+          key: clone-${{ matrix.openwrt_revision }}
+
+      - name: clone repository
+        if: steps.restore-clone.outputs.cache-hit != 'true'
+        run: ./2-clone.sh
+
+      - name: save clone cache
+        if: steps.restore-clone.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: openwrt
+          key: ${{ steps.restore-clone.outputs.cache-primary-key }}
+
+      - name: configure repository
+        run: ./3-config.sh
+
+      - name: restore download cache
+        id: restore-download
+        uses: actions/cache/restore@v5
+        with:
+          path: openwrt/dl
+          # Using a less than ideal cache key to reduce cache storage so we can
+          # be under 10GB for GitHub.
+          key: download-${{ matrix.openwrt_revision }}
+
+      - name: download dependencies
+        if: steps.restore-download.outputs.cache-hit != 'true'
+        run: ./4-download.sh
+
+      - name: save download cache
+        if: steps.restore-download.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: openwrt/dl
+          key: ${{ steps.restore-download.outputs.cache-primary-key }}
+
+      - name: restore toolchain cache
+        id: restore-toolchain
+        uses: actions/cache/restore@v5
+        with:
+          path: |
+            openwrt/build_dir
+            openwrt/staging_dir
+          key: toolchain-${{ matrix.openwrt_revision }}-${{ matrix.openwrt_target }}
+
+      - name: compile toolchain
+        if: steps.restore-toolchain.outputs.cache-hit != 'true'
+        run: ./5-toolchain.sh
+
+      - name: save toolchain cache
+        if: steps.restore-toolchain.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: |
+            openwrt/build_dir
+            openwrt/staging_dir
+          key: ${{ steps.restore-toolchain.outputs.cache-primary-key }}
+
+      - name: compile
+        run: ./6-compile.sh
+
+      - name: make release
+        run: ./7-release.sh
+
+      - name: set arch
+        run: echo "ARCH=$(ls -1 openwrt/bin/packages)" >>"$GITHUB_ENV"
+
+      - name: upload artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: packages-${{ matrix.openwrt_revision }}-${{ env.ARCH }}
+          path: release
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: download artifacts
+        if: github.ref_type == 'tag'
+        uses: actions/download-artifact@v7
+        with:
+          merge-multiple: true
+          path: release
+
+      - name: publish release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/*
