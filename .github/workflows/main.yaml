@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        openwrt_revision: ["v24.10.5", "v25.12.0-rc1"]
+        openwrt_revision: ["v24.10.5", "v25.12.0-rc2"]
         openwrt_target: ["lantiq-xrx200", "ramips-mt7621", "x86-64"]
       fail-fast: false
 
