@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/sasanarakkha/build-dnsmasq-openwrt/actions/workflows/main.yaml/badge.svg)](https://github.com/sasanarakkha/build-dnsmasq-openwrt/actions/workflows/main.yaml)
 
-Builds of the latest [dnsmasq], **version 2.92rc3**, for [OpenWRT].
+Builds of the latest [dnsmasq], **version 2.92**, for [OpenWRT].
 
 ## Download
 
