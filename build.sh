@@ -3,7 +3,7 @@
 set -eu
 cd "$(dirname "$0")"
 
-OPENWRT_REVISIONS="v24.10.5 v25.12.0-rc2"
+OPENWRT_REVISIONS="v24.10.5 v25.12.0-rc3"
 OPENWRT_TARGETS="lantiq-xrx200 ramips-mt7621 x86-64"
 
 export OPENWRT_REVISION
